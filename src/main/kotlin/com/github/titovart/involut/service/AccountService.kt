@@ -30,9 +30,10 @@ class AccountService(
         }
     }
 
-    fun close(accountId: Long): Boolean {
+    fun close(accountId: Long): Account? {
         return transactionManager.runInTransaction {
             accountRepository.close(accountId, OffsetDateTime.now(clock))
+            accountRepository.findById(accountId)
         }
     }
 

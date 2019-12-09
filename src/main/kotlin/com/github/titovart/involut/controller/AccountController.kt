@@ -18,9 +18,9 @@ class AccountController(
 ) {
 
     fun findAccountById(ctx: Context) {
-        val requestedId = ctx.pathParam("id").toLong()
-        val account = (accountService.findById(requestedId)
-            ?: throw NotFoundResponse("Account[id=$requestedId] hasn't been found"))
+        val accountId = ctx.pathParam("id").toLong()
+        val account = (accountService.findById(accountId)
+            ?: throw NotFoundResponse("Account[id=$accountId] hasn't been found"))
         ctx.json(account)
     }
 
@@ -58,7 +58,8 @@ class AccountController(
 
     fun close(ctx: Context) {
         val id = ctx.pathParam("id").toLong()
-        accountService.close(id)
+        val account = accountService.close(id) ?: throw NotFoundResponse("Account[id=$id] hasn't been found")
+        ctx.json(account)
         ctx.status(200)
     }
 
@@ -67,7 +68,7 @@ class AccountController(
 
         try {
             return OffsetDateTime.parse(paramValue)
-        } catch(exc: DateTimeParseException) {
+        } catch (exc: DateTimeParseException) {
             throw BadRequestResponse("Range parameter='$paramValue' is not valid")
         }
     }

@@ -19,7 +19,6 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
-import io.javalin.http.BadRequestResponse
 import io.javalin.http.HttpResponseException
 import io.javalin.plugin.json.JavalinJackson
 import org.apache.commons.dbutils.QueryRunner
@@ -83,7 +82,7 @@ class InvolutApplication {
 
     private fun initRoutes(app: Javalin): Javalin {
         // TODO: replace this boilerplate by DI framework
-        dataSource  = createDataSource()
+        dataSource = createDataSource()
         val queryRunner = QueryRunner(dataSource)
         applyDbSchema(queryRunner)
 

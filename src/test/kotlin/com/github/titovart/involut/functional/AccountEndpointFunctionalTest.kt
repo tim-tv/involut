@@ -71,6 +71,27 @@ class AccountEndpointFunctionalTest : AbstractFunctionalTest() {
     @Test
     @DataSet("fixtures/account/close/single_closed.xml", cleanBefore = true)
     @ExpectedDataSet("fixtures/account/close/single_closed.xml")
+    fun `should close already closed account`() {
+
+        val (_, response, _) = "/accounts/1".httpPatch()
+            .response()
+
+        assertEquals(200, response.statusCode)
+    }
+
+    @Test
+    @DataSet("fixtures/account/close/single_opened.xml", cleanBefore = true)
+    fun `shouldn't close account by invalid id`() {
+
+        val (_, response, _) = "/accounts/47".httpPatch()
+            .response()
+
+        assertEquals(404, response.statusCode)
+    }
+
+    @Test
+    @DataSet("fixtures/account/close/single_closed.xml", cleanBefore = true)
+    @ExpectedDataSet("fixtures/account/close/single_closed.xml")
     fun `should return ok on closing already closed account`() {
 
         val (_, response, _) = "/accounts/1".httpPatch()

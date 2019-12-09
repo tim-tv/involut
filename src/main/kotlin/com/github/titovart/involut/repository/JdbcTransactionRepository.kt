@@ -2,6 +2,7 @@ package com.github.titovart.involut.repository
 
 import com.github.titovart.involut.db.ConnectionHolder
 import com.github.titovart.involut.dto.DateTimeRangeRequest
+import com.github.titovart.involut.dto.TimedChange
 import com.github.titovart.involut.model.Transaction
 import com.github.titovart.involut.model.TransactionChange
 import com.github.titovart.involut.model.TransactionStatus
@@ -18,19 +19,19 @@ class JdbcTransactionRepository(
 ) : TransactionRepository {
 
     override
-    fun findChangeListByAccountIdAndDateRange(accountId: Long, range: DateTimeRangeRequest): List<TransactionChange> {
+    fun findChangeListByAccountIdAndDateRange(accountId: Long, range: DateTimeRangeRequest): List<TimedChange> {
         return queryRunner.query(
             connectionHolder.getConnection(),
-            "SELECT change.* " +
+            "SELECT change.*, transaction.updated_at AS completed_at " +
                     "FROM change " +
                     "JOIN transaction ON change.transaction_id = transaction.id " +
                     "WHERE transaction.status = ? " +
                     "AND transaction.updated_at >= ? " +
                     "AND transaction.updated_at < ? " +
                     "AND change.account_id = ? " +
-                    "ORDER BY transaction.updated_at " +
+                    "ORDER BY transaction.updated_at DESC " +
                     "LIMIT 100",
-            TransactionChangeHandler(),
+            TimedChangeHandler(),
             TransactionStatus.COMPLETED.code, range.from, range.to, accountId
         )
     }
@@ -71,12 +72,12 @@ class JdbcTransactionRepository(
         )
     }
 
-    private class TransactionChangeHandler : ResultSetHandler<List<TransactionChange>> {
+    private class TimedChangeHandler : ResultSetHandler<List<TimedChange>> {
 
-        override fun handle(rs: ResultSet?): List<TransactionChange> {
+        override fun handle(rs: ResultSet?): List<TimedChange> {
             rs ?: throw SQLException("Result state is null")
 
-            val changes = arrayListOf<TransactionChange>()
+            val changes = arrayListOf<TimedChange>()
 
             while (rs.next()) {
                 val change = TransactionChange(
@@ -86,7 +87,9 @@ class JdbcTransactionRepository(
                     rs.getBigDecimal("change.amount")
                 )
 
-                changes.add(change)
+                val completedAt = rs.getObject("completed_at", OffsetDateTime::class.java)
+
+                changes.add(TimedChange(completedAt, change))
             }
 
             return changes

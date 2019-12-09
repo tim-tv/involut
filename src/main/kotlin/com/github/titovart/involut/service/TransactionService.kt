@@ -7,6 +7,7 @@ import com.github.titovart.involut.repository.AccountRepository
 import com.github.titovart.involut.repository.TransactionRepository
 import com.github.titovart.involut.db.TransactionManager
 import com.github.titovart.involut.dto.DateTimeRangeRequest
+import com.github.titovart.involut.dto.TimedChange
 import com.github.titovart.involut.model.Account
 import com.github.titovart.involut.util.isNotPositive
 import java.sql.Connection
@@ -21,7 +22,7 @@ class TransactionService(
     private val transactionRepository: TransactionRepository
 ) {
 
-    fun findChangeListByAccountIdAndDateRange(accountId: Long, range: DateTimeRangeRequest): List<TransactionChange> {
+    fun findChangeListByAccountIdAndDateRange(accountId: Long, range: DateTimeRangeRequest): List<TimedChange> {
         return transactionManager.runInReadOnlyTransaction {
             transactionRepository.findChangeListByAccountIdAndDateRange(accountId, range)
         }

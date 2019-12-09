@@ -1,6 +1,7 @@
 package com.github.titovart.involut.service
 
 import com.github.titovart.involut.dto.DateTimeRangeRequest
+import com.github.titovart.involut.dto.TimedChange
 import com.github.titovart.involut.model.Transaction
 import com.github.titovart.involut.model.TransactionChange
 import com.github.titovart.involut.util.isNotPositive
@@ -10,7 +11,7 @@ import java.math.BigDecimal
 class BalanceService(private val accountService: AccountService,
                      private val transactionService: TransactionService) {
 
-    fun findChangeList(accountId: Long, dateTimeRange: DateTimeRangeRequest): List<TransactionChange> {
+    fun findChangeList(accountId: Long, dateTimeRange: DateTimeRangeRequest): List<TimedChange> {
         accountService.findById(accountId) ?: throw NotFoundResponse("Account[id=$accountId] hasn't been found")
 
         return transactionService.findChangeListByAccountIdAndDateRange(accountId, dateTimeRange)
