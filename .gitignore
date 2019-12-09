@@ -30,3 +30,8 @@ gradle-app.setting
 .gradletasknamecache
 
 .idea
+
+# Ignore MacOS stuff
+.DS_Store
+.AppleDouble
+.LSOverride
