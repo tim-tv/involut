@@ -9,8 +9,8 @@
 * Add framework for database migrations
 * Optimize some SQL queries by using batches
 * Make methods for creating transactions as idempotent by using Idempotency-Key
+* Add logging for requests/responses and key operations
 
-------------------------------------------------------------
 # REST API
 
 ### Create a new account
